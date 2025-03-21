@@ -2,11 +2,12 @@
   "name": "TransformSolutions",
   "version": "1.0.0",
   "description": "Transform AI Solutions Website",
+  "main": "server.js",
   "scripts": {
-    "start": "npx http-server ./ -p $PORT"
+    "start": "node server.js"
   },
   "dependencies": {
-    "http-server": "^14.1.1"
+    "express": "^4.21.2"
   },
   "engines": {
     "node": ">=16.0.0"
