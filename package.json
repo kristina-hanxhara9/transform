@@ -1,11 +1,15 @@
 {
-    "name": "TransformSolutions",
-    "version": "1.0.0",
-    "description": "Website Project",
-    "scripts": {
-      "start": "npx http-server ./src/public -p 3000"
-    },
-    "dependencies": {
-      "http-server": "^14.1.1"
-    }
+  "name": "transform-ai-solutions",
+  "version": "1.0.0",
+  "description": "Transform AI Solutions Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
+}
