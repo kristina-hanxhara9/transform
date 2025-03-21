@@ -1,0 +1,11 @@
+{
+    "name": "TransformSolutions",
+    "version": "1.0.0",
+    "description": "Website Project",
+    "scripts": {
+      "start": "npx http-server ./src/public -p 3000"
+    },
+    "dependencies": {
+      "http-server": "^14.1.1"
+    }
+  }
