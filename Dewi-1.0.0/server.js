@@ -1,0 +1,41 @@
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Serve static files from the Dewi-1.0.0 directory
+app.use(express.static(path.join(__dirname, 'Dewi-1.0.0')));
+
+// Specifically serve assets with correct MIME types
+app.use('/assets/css', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/css'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+
+app.use('/assets/js', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/js'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
+
+app.use('/assets/img', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/img')));
+app.use('/assets/vendor', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/vendor')));
+
+// Handle root route - assuming you have an index.html in the root of Dewi-1.0.0
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Dewi-1.0.0', 'index.html'));
+});
+
+// Handle any other routes that might be needed for single-page applications
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Dewi-1.0.0', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
