@@ -52,6 +52,8 @@
   ======================================================== -->
 </head>
 
+<script src="https://chatbot-njg2.onrender.com/transform-ai-widget.js" 
+        data-server-url="https://chatbot-njg2.onrender.com"></script>
 
 <body class="index-page">
   <div class="floating-logo" style="position: fixed; top: 100px; left: 30px; z-index: 9999;">
@@ -96,7 +98,8 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="cta-btn" href="https://calendly.com/kristinazhi97">Book a free consultation</a>
+      <a class="cta-btn" href="javascript:void(0)" onclick="openBookingModal()">Book a free consultation</a>
+
   </header>
 <!-- Floating Logo -->
 
@@ -118,7 +121,8 @@
                   <!-- Hero Btn -->
                   
                 
-                  <a class="btn" href="https://calendly.com/kristinazhi97">Book a free consultation for transformation</a>
+                  <a class="btn" href="javascript:void(0)" onclick="openBookingModal()">Book a free consultation for transformation</a>
+
               </div>
               <div class="hero-img">
                 <img src="./assets/img/ai-generated/resized-hero.png" alt="" data-animation="fadeInRight" data-transition-duration="5s" style="width: 120%; max-width: 800px; height: 800%; object-fit: contain;">
@@ -1201,6 +1205,19 @@
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-
+  <script>
+    function openBookingModal() {
+      const width = Math.min(900, window.innerWidth * 0.9);
+      const height = Math.min(700, window.innerHeight * 0.9);
+      const left = (window.innerWidth - width) / 2;
+      const top = (window.innerHeight - height) / 2;
+      
+      window.open(
+        'https://chatbot-njg2.onrender.com/booking.html',
+        'TransformAI_Booking',
+        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+      );
+    }
+  </script>
 </body>
 </html>
