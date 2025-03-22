@@ -1,111 +1,91 @@
 const express = require('express');
 const path = require('path');
+const mime = require('mime-types');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Helper function to set headers for JavaScript files
-const setJsHeaders = (res, filePath) => {
-  if (filePath.endsWith('.js')) {
-    res.setHeader('Content-Type', 'application/javascript');
-  }
-};
+// Log all requests to see what's happening
+app.use((req, res, next) => {
+  console.log(`Request: ${req.method} ${req.url}`);
+  next();
+});
 
-// Helper function to set headers for CSS files
-const setCssHeaders = (res, filePath) => {
-  if (filePath.endsWith('.css')) {
-    res.setHeader('Content-Type', 'text/css');
+// Custom middleware to serve files with explicit Content-Type
+app.use((req, res, next) => {
+  // Skip if not requesting a file
+  if (!req.path.includes('.')) {
+    return next();
   }
-};
+
+  // Get the absolute file path
+  let filePath;
+  if (req.path.startsWith('/Dewi-1.0.0/')) {
+    filePath = path.join(__dirname, req.path);
+  } else {
+    // Check if the file exists directly at the root
+    filePath = path.join(__dirname, req.path);
+    if (!fs.existsSync(filePath)) {
+      // Try with Dewi-1.0.0 prefix if not found at root
+      filePath = path.join(__dirname, 'Dewi-1.0.0', req.path);
+    }
+  }
+
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    console.log(`File not found: ${filePath}`);
+    return next();
+  }
+
+  // Get MIME type and set explicit content type
+  const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+  console.log(`Serving ${filePath} with Content-Type: ${mimeType}`);
+
+  // Set proper content type
+  res.setHeader('Content-Type', mimeType);
+  
+  // Stream the file
+  fs.createReadStream(filePath).pipe(res);
+});
 
 // Serve static files from the root directory
 app.use(express.static(path.join(__dirname)));
 
-// Serve the Dewi-1.0.0 directory with correct MIME types for ALL files
-app.use('/Dewi-1.0.0', express.static(path.join(__dirname, 'Dewi-1.0.0'), {
-  setHeaders: (res, filePath) => {
-    // Set correct MIME types based on file extension
-    if (filePath.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (filePath.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    } else if (filePath.endsWith('.svg')) {
-      res.setHeader('Content-Type', 'image/svg+xml');
-    } else if (filePath.endsWith('.ttf')) {
-      res.setHeader('Content-Type', 'font/ttf');
-    } else if (filePath.endsWith('.woff')) {
-      res.setHeader('Content-Type', 'font/woff');
-    } else if (filePath.endsWith('.woff2')) {
-      res.setHeader('Content-Type', 'font/woff2');
-    } else if (filePath.endsWith('.eot')) {
-      res.setHeader('Content-Type', 'application/vnd.ms-fontobject');
-    } else if (filePath.endsWith('.png')) {
-      res.setHeader('Content-Type', 'image/png');
-    } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
-      res.setHeader('Content-Type', 'image/jpeg');
-    } else if (filePath.endsWith('.webp')) {
-      res.setHeader('Content-Type', 'image/webp');
-    }
-  }
-}));
-
-// Explicitly set up routes for specific vendor directories that contain JS
-const vendorJsDirs = [
-  '/Dewi-1.0.0/assets/vendor/aos',
-  '/Dewi-1.0.0/assets/vendor/bootstrap/js',
-  '/Dewi-1.0.0/assets/vendor/glightbox/js',
-  '/Dewi-1.0.0/assets/vendor/imagesloaded',
-  '/Dewi-1.0.0/assets/vendor/isotope-layout',
-  '/Dewi-1.0.0/assets/vendor/php-email-form',
-  '/Dewi-1.0.0/assets/vendor/purecounter',
-  '/Dewi-1.0.0/assets/vendor/swiper'
-];
-
-vendorJsDirs.forEach(dir => {
-  app.use(dir, express.static(path.join(__dirname, dir.substring(1)), {
-    setHeaders: setJsHeaders
-  }));
-});
-
-// Explicitly set up routes for css directories
-const vendorCssDirs = [
-  '/Dewi-1.0.0/assets/vendor/aos',
-  '/Dewi-1.0.0/assets/vendor/bootstrap/css',
-  '/Dewi-1.0.0/assets/vendor/bootstrap-icons',
-  '/Dewi-1.0.0/assets/vendor/boxicons/css',
-  '/Dewi-1.0.0/assets/vendor/glightbox/css',
-  '/Dewi-1.0.0/assets/vendor/swiper',
-  '/Dewi-1.0.0/assets/css'
-];
-
-vendorCssDirs.forEach(dir => {
-  app.use(dir, express.static(path.join(__dirname, dir.substring(1)), {
-    setHeaders: setCssHeaders
-  }));
-});
-
 // Handle root route - serve index.html from the root directory
 app.get('/', (req, res) => {
+  console.log('Serving index.html from root');
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Add a special route for main.js to explicitly set the content type
-app.get('/Dewi-1.0.0/assets/js/main.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, 'Dewi-1.0.0/assets/js/main.js'));
-});
-
-// Handle any other routes that might be part of your single-page application
+// Handle any other routes
 app.get('*', (req, res) => {
-  // Try to serve the file directly if it exists
-  const filePath = path.join(__dirname, req.path);
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      // If file not found, default to index.html for SPA routing
-      res.sendFile(path.join(__dirname, 'index.html'));
-    }
-  });
+  if (!req.path.includes('.')) {
+    console.log(`No file extension in path: ${req.path}, serving index.html`);
+    return res.sendFile(path.join(__dirname, 'index.html'));
+  }
+  
+  // If we got here, the custom middleware didn't handle the file
+  console.log(`Warning: Reached the catch-all route for: ${req.path}`);
+  res.status(404).send('File not found');
 });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Root directory: ${path.join(__dirname)}`);
+  console.log(`Dewi-1.0.0 directory: ${path.join(__dirname, 'Dewi-1.0.0')}`);
+  
+  // List files in root and Dewi directories to debug
+  try {
+    console.log('\nFiles in root directory:');
+    fs.readdirSync(__dirname).forEach(file => {
+      console.log(` - ${file}`);
+    });
+    
+    console.log('\nFiles in Dewi-1.0.0 directory:');
+    fs.readdirSync(path.join(__dirname, 'Dewi-1.0.0')).forEach(file => {
+      console.log(` - ${file}`);
+    });
+  } catch (error) {
+    console.error('Error listing files:', error);
+  }
 });
