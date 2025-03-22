@@ -1,13 +1,16 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
+
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname)));
 
 // Serve static files from the Dewi-1.0.0 directory
-app.use(express.static(path.join(__dirname, 'Dewi-1.0.0')));
+app.use('/Dewi-1.0.0', express.static(path.join(__dirname, 'Dewi-1.0.0')));
 
 // Specifically serve assets with correct MIME types
-app.use('/assets/css', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/css'), {
+app.use('/Dewi-1.0.0/assets/css', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/css'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css');
@@ -15,7 +18,7 @@ app.use('/assets/css', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/cs
   }
 }));
 
-app.use('/assets/js', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/js'), {
+app.use('/Dewi-1.0.0/assets/js', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/js'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript');
@@ -23,17 +26,24 @@ app.use('/assets/js', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/js'
   }
 }));
 
-app.use('/assets/img', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/img')));
-app.use('/assets/vendor', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/vendor')));
+app.use('/Dewi-1.0.0/assets/img', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/img')));
+app.use('/Dewi-1.0.0/assets/vendor', express.static(path.join(__dirname, 'Dewi-1.0.0/assets/vendor')));
 
-// Handle root route - assuming you have an index.html in the root of Dewi-1.0.0
+// Handle root route - now looking for index.html in the root directory
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Dewi-1.0.0', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Handle any other routes that might be needed for single-page applications
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Dewi-1.0.0', 'index.html'));
+  // Try to serve from root directory first
+  const filePath = path.join(__dirname, req.path);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      // If file not found, default to index.html
+      res.sendFile(path.join(__dirname, 'index.html'));
+    }
+  });
 });
 
 app.listen(PORT, () => {
