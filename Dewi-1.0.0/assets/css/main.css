@@ -227,6 +227,7 @@ h6 {
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .slider-area {
     padding-bottom: 50px;
+    padding-top: 100px; /* Add more space at the top to prevent overlap with header */
   }
 }
 
@@ -234,7 +235,7 @@ h6 {
        (max-width: 575px) {
   .slider-area {
     padding-bottom: 50px;
-    padding-top: 50px;
+    padding-top: 120px; /* Add even more space for very small screens */
   }
 }
 
@@ -312,7 +313,9 @@ h6 {
        (max-width: 575px) {
   .slider-area .single-slider .slider-cap-wrapper .hero-caption {
     width: 100%;
-    padding-left: 37px;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center; /* Center the text for better appearance on mobile */
   }
 }
 
@@ -358,6 +361,7 @@ h6 {
   .slider-area .single-slider .slider-cap-wrapper .hero-caption h1 {
     font-size: 30px;
     line-height: 1.2;
+    padding-top: 20px; /* Add padding to prevent text from being hidden behind the header */
   }
 }
 
@@ -366,14 +370,16 @@ h6 {
     font-size: 33px;
     line-height: 1.2;
     margin-bottom: 30px;
+    padding-top: 20px; /* Add padding for smaller screens */
   }
 }
 
 @media (max-width: 575px) {
   .slider-area .single-slider .slider-cap-wrapper .hero-caption h1 {
-    font-size: 23px;
+    font-size: 28px; /* Slightly increase from 23px for better readability */
     line-height: 1.2;
     margin-bottom: 25px;
+    padding-top: 30px; /* Add more padding for very small screens */
   }
 }
 
@@ -384,7 +390,6 @@ h6 {
   color: #010A44;
   font-size: 20px;
   padding-right: 50px;
-  
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
@@ -394,6 +399,13 @@ h6 {
     padding-right: 21px;
   }
 }
+
+@media (max-width: 575px) {
+  .slider-area .single-slider .slider-cap-wrapper .hero-caption p {
+    padding-right: 0; /* Remove right padding on small screens */
+  }
+}
+
 /* Video Icon */
 .slider-area .video-icon {
   position: absolute;
@@ -434,12 +446,9 @@ h6 {
   }
 }
 
+/* Remove original floating logo class */
 .floating-logo {
-  position: fixed; /* This is the crucial part that was missing */
-  animation: float 3s ease-in-out infinite;
-  bottom: 700px;
-  left: 30px; /* Adjust this if you want to change horizontal position */
-  z-index: 9999; /* Ensures the logo stays on top of other elements */
+  display: none; /* Hide the original floating logo */
 }
 
 @keyframes float {
@@ -447,13 +456,12 @@ h6 {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px); /* Reduced from -10px to be more subtle */
   }
   100% {
     transform: translateY(0px);
   }
 }
-  
 
 /*--------------------------------------------------------------
 # Global Header
@@ -476,6 +484,7 @@ h6 {
 .header .logo img {
   max-height: 36px;
   margin-right: 8px;
+  animation: float 3s ease-in-out infinite; /* Add floating animation to the logo in the navbar */
 }
 
 .header .logo h1 {
@@ -521,7 +530,9 @@ h6 {
 }
 
 .scrolled .header {
-  --background-color: rgba(21, 34, 43, 0.85); /* Background color when scrolled */ --default-color: #ffffff; /* Text color when scrolled */ --heading-color: #ffffff; /* Heading color when scrolled */
+  --background-color: rgba(21, 34, 43, 0.85); /* Background color when scrolled */ 
+  --default-color: #ffffff; /* Text color when scrolled */ 
+  --heading-color: #ffffff; /* Heading color when scrolled */
   box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
 }
 
@@ -538,7 +549,6 @@ h6 {
 @media (min-width: 1200px) {
   .navmenu {
     padding: 0;
-    
   }
 
   .navmenu ul {
@@ -798,6 +808,8 @@ h6 {
 # Global Footer
 --------------------------------------------------------------*/
 .footer {
+  /* Your footer styles here */
+
   color: var(--default-color);
   background-color: var(--background-color);
   font-size: 14px;
