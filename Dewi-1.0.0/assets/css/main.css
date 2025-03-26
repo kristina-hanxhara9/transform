@@ -482,7 +482,7 @@ h6 {
 }
 
 .header .logo img {
-  max-height: 36px;
+  max-height: 63px;
   margin-right: 8px;
   animation: float 3s ease-in-out infinite; /* Add floating animation to the logo in the navbar */
 }
